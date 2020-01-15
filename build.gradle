@@ -1,0 +1,40 @@
+buildscript {
+    configurations.maybeCreate('pitest')
+    dependencies {
+        classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.4.5'
+        pitest 'org.pitest:pitest-junit5-plugin:0.8'
+    }
+}
+
+plugins {
+    id "java"
+    id("info.solidsoft.pitest") version "1.4.5"
+}
+
+group = "pitest.sample"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-webflux:2.2.2.RELEASE")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
+    testImplementation("org.springframework.boot:spring-boot-starter-test:2.2.2.RELEASE")
+}
+
+test {
+    // By default, current version of gradle doesn't run junit 5 tests. In order to enable them - we need this:
+    useJUnitPlatform()
+}
+
+pitest {
+    testPlugin = "junit5"
+    mutators = ["NEW_DEFAULTS"]
+    timeoutFactor = "20"
+    timeoutConstInMillis = 10000
+    verbose = true
+    outputFormats = ["HTML"]
+    timestampedReports = false
+    threads = 1
+}
